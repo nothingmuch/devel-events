@@ -16,8 +16,11 @@ sub filter_event {
 	);
 }
 
+my $i;
+
 sub stamp_data {
 	return (
+		id   => ++$i,
 		time => time(), # DateTime eats HiRes time =D
 		pid  => $$,
 		( defined &Thread::tid # Only if threads are loaded
