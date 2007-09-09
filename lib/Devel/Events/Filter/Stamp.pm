@@ -8,11 +8,12 @@ with qw/Devel::Events::Filter/;
 use Time::HiRes qw/time/;
 
 sub filter_event {
-	my ( $self, @event ) = @_;
+	my ( $self, $type, @data ) = @_;
 
 	return (
+		$type,
 		$self->stamp_data,
-		@event,
+		@data,
 	);
 }
 
