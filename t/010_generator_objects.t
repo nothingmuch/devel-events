@@ -6,27 +6,17 @@ use warnings;
 use Test::More 'no_plan';
 use Test::Exception;
 
+use Devel::Events::Handler::Callback;
+
 use ok 'Devel::Events::Generator::Objects';
 
-{
-	package Handler;
-	sub new {
-		my ( $class, $h ) = @_;
-		bless $h, $class;
-	}
-
-	sub new_event {
-		my ( $self, @event ) = @_;
-		$self->( @event );
-	}
-}
 my $file = quotemeta(__FILE__);
 
 throws_ok { bless "foo", "bar" } qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors";
 
 my @events;
 
-my $h = Handler->new(sub {
+my $h = Devel::Events::Handler::Callback->new(sub {
 	push @events, [ map { ref($_) ? "$_" : $_ } @_ ]; # don't leak
 });
 
