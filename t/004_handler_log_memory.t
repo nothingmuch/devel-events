@@ -18,5 +18,41 @@ is_deeply(
 		[ foo => bar   => [ 1, 2, 3 ] ],
 		[ bar => moose => [ 3, 2, 1 ] ],
 	],
+	"events logged",
+);
+
+$log->clear;
+
+is( scalar(@{ $log->events }), 0, "cleared" );
+
+my $i;
+for ( 1 .. 3 ) {
+	$log->new_event( foo => bar   => [ 1, 2, 3 ], id => ++$i );
+	$log->new_event( bar => moose => [ 3, 2, 1 ], id => ++$i );
+}
+
+is_deeply(
+	[ $log->grep("foo") ],
+	[
+		[ foo => bar   => [ 1, 2, 3 ], id => 1 ],
+		[ foo => bar   => [ 1, 2, 3 ], id => 3 ],
+		[ foo => bar   => [ 1, 2, 3 ], id => 5 ],
+	],
+	"grep",
+);
+
+use Data::Dumper;
+
+is_deeply(
+	[ $log->limit(
+		from => { id => 3 },
+		to   => { id => 5 },
+	) ],
+	[
+		[ foo => bar   => [ 1, 2, 3 ], id => 3 ],
+		[ bar => moose => [ 3, 2, 1 ], id => 4 ],
+		[ foo => bar   => [ 1, 2, 3 ], id => 5 ],
+	],
+	"limit",
 );
 
