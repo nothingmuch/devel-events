@@ -95,16 +95,21 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 =head1 SYNOPSIS
 
 	use Devel::Cycle;
+	use Data::Dumper;
 
 	use Devel::Events::Handler::ObjectTracker;
 	use Devel::Events::Filter::Stamp;
+	use Devel::Events::Filter::RemoveFields;
 	use Devel::Events::Generator::Objects;
 
 	my $tracker = Devel::Events::Handler::ObjectTracker->new();
 
 	my $gen = Devel::Events::Generator::Objects->new(
 		handler => Devel::Events::Filter::Stamp->new(
-			handler => $tracker,
+			handler => Devel::Events::Filter::RemoveFields->new(
+				fields => [qw/generator/], # don't need to have a ref to $gen in each event
+				handler => $tracker,
+			),
 		),
 	);
 
@@ -115,9 +120,18 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 	$gen->clear_global_bless();
 
 	# live_objects is a Tie::RefHash::Weak hash
-	foreach my $object ( keys %{ $tracker->live_objects } ) {
+
+	my @leaked_objects = keys %{ $tracker->live_objects };
+
+	print "leaked ", scalar(@leaked_objects), " objects\n";
+
+	foreach my $object ( @leaked_objects ) {
+		print "Leaked object: $object\n";
+
+		# the event that generated it
+		print Dumper( $object, $tracker->live_object->{$object} );
+
 		find_cycle( $object );
-		print "event id: " . $tracker->live_objects->{$object}{id};
 	}
 
 =head1 DESCRIPTION
