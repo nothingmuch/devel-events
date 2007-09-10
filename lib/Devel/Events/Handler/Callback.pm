@@ -3,6 +3,8 @@
 package Devel::Events::Handler::Callback;
 use Moose;
 
+with qw/Devel::Events::Handler/;
+
 has callback => (
 	isa => "CodeRef",
 	is  => "rw",
