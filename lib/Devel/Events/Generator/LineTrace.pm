@@ -17,13 +17,13 @@ sub DB::DB {
 	}
 }
 
-sub start_tracing {
+sub enable {
 	my $self = shift;
 	$SINGLETON = $self;
 	weaken($SINGLETON);
 }
 
-sub stop_tracing {
+sub disable {
 	$SINGLETON = undef;
 }
 

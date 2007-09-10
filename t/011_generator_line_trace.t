@@ -15,11 +15,11 @@ my $h = Devel::Events::Handler::Callback->new(sub {
 
 my $o = Devel::Events::Generator::LineTrace->new( handler => $h );
 
-$o->start_tracing;
+$o->enable;
 
 my $line = __LINE__;
 
-$o->stop_tracing;
+$o->disable;
 
 is_deeply(
 	\@events,
