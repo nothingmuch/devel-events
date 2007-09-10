@@ -76,8 +76,7 @@ sub handle_object_destroy {
 	
 	my $object = $args{object};
 
-	delete $self->live_objects->{$object}; # it will delete itself
-
+	delete $self->live_objects->{$object}; # it will delete itself... is this necessary?
 	my $class = delete $self->object_to_class->{$object};
 
 	$self->class_counters->{$class}--;
