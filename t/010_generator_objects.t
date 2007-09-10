@@ -68,7 +68,7 @@ is_deeply(
 	"event log",
 );
 
-my ( $hash_str ) = ( $obj_str =~ /^Some::Other::Class=(HASH\(0x[\w]+\))$/ ); # objects are unblessed, then they get freed
+my ( $hash_str ) = ( $obj_str =~ /^Some::Other::Class=(HASH\(0x[\w]+\))$/ ); # objects are first unblessed, then they get freed
 
 @events = ();
 
