@@ -22,7 +22,7 @@ my $tracker = Devel::Events::Handler::ObjectTracker->new();
 		),
 	);
 
-	$gen->handle_global_bless(); # start generating events
+	$gen->enable(); # start generating events
 
 	{
 		my $object = bless({}, "Class::A");
@@ -42,7 +42,7 @@ my $tracker = Devel::Events::Handler::ObjectTracker->new();
 		$object->{foo}{bar}{gorch} = $object;
 	}
 
-	$gen->clear_global_bless();
+	$gen->disable();
 
 }
 

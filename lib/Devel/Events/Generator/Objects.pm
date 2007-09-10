@@ -63,13 +63,13 @@ use Scalar::Util qw/reftype blessed weaken/;
 	};
 }
 
-sub handle_global_bless {
+sub enable {
 	my $self = shift;
 	$SINGLETON = $self;
 	weaken($SINGLETON);
 }
 
-sub clear_global_bless {
+sub disable {
 	$SINGLETON = undef;
 }
 

@@ -34,7 +34,7 @@ bless( {}, "Some::Class" );
 
 is( @events, 0, "no events" );
 
-$gen->handle_global_bless();
+$gen->enable();
 
 throws_ok { bless "foo", "bar" } qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors after registring handler either";
 
