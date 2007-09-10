@@ -17,10 +17,12 @@ has handler => (
 sub new_event {
 	my ( $self, @event ) = @_;
 
+	my @filtered = $self->filter_event( @event );
+
 	if ( my $handler = $self->handler ) {
-		$handler->new_event( $self->filter_event( @event ) );
+		$handler->new_event(@filtered);
 	} else {
-		$self->no_handler_error(@event);
+		$self->no_handler_error(@filtered);
 	}
 }
 
