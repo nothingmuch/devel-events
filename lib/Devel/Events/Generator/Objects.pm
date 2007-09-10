@@ -73,14 +73,6 @@ sub clear_global_bless {
 	$SINGLETON = undef;
 }
 
-sub DESTROY {
-	my $self = shift;
-
-	if ( defined $SINGLETON and $SINGLETON == $self ) {
-		$SINGLETON = undef;
-	}
-}
-
 sub bless {
 	my ( $self, $data, $class ) = @_;
 	$class = caller unless defined $class;
