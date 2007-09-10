@@ -1,10 +1,11 @@
-#!/usr/bin/perl -d:Events::Generator::LineTrace
+#!/usr/bin/perl -d:Events
 
 use strict;
 use warnings;
 
 use Test::More 'no_plan';
 
+use ok 'Devel::Events::Generator::LineTrace';
 use Devel::Events::Handler::Callback;
 
 my @events;

@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+BEGIN { $^P |= 0x02 }
+
 package Devel::Events::Generator::LineTrace;
 use Moose;
 
