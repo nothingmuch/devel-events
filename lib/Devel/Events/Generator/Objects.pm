@@ -28,8 +28,8 @@ use Moose;
 with qw/Devel::Events::Generator/;
 
 use Carp qw/croak/;
-use Variable::Magic qw/cast/;
-use Scalar::Util qw/reftype blessed/;
+use Variable::Magic qw/cast getdata/;
+use Scalar::Util qw/reftype blessed weaken/;
 
 {
 	no warnings 'redefine';
@@ -66,10 +66,19 @@ use Scalar::Util qw/reftype blessed/;
 sub handle_global_bless {
 	my $self = shift;
 	$SINGLETON = $self;
+	weaken($SINGLETON);
 }
 
 sub clear_global_bless {
 	$SINGLETON = undef;
+}
+
+sub DESTROY {
+	my $self = shift;
+
+	if ( defined $SINGLETON and $SINGLETON == $self ) {
+		$SINGLETON = undef;
+	}
 }
 
 sub bless {
@@ -110,8 +119,10 @@ sub generate_event {
 
 use constant tracker_magic => Variable::Magic::wizard(
 	free => sub {
-		my ( $object, $self ) = @_;
-		$self->object_destroy( $object ) if defined $self; # might disappear in global destruction
+		my ( $object, $objs ) = @_;
+		foreach my $self ( @{ $objs || [] } ) {
+			$self->object_destroy( $object ) if defined $self; # might disappear in global destruction
+		}
 	},
 	data => sub {
 		my ( $object, $self ) = @_;
@@ -122,17 +133,33 @@ use constant tracker_magic => Variable::Magic::wizard(
 sub track_object {
 	my ( $self, $object ) = @_;
 
-    if ( reftype $object eq 'SCALAR' ) {
-		cast( $$object, $self->tracker_magic($object), $self );
-    } elsif ( reftype $object eq 'HASH' ) {
-        cast( %$object, $self->tracker_magic($object), $self );
-    } elsif ( reftype $object eq 'ARRAY' ) {
-        cast( @$object, $self->tracker_magic($object), $self );
-    } elsif ( reftype $object eq 'GLOB' or reftpe $object eq 'IO' ) {
-        cast( *$object, $self->tracker_magic($object), $self );
-    } else {
-        warn "patches welcome: " . reftype($object);
-    }
+
+	my $objects;
+
+	# blech, any idea how to clean this up?
+
+	my $wiz = $self->tracker_magic($object);
+
+	if ( reftype $object eq 'SCALAR' ) {
+		$objects = getdata( $$object, $wiz )
+			or cast( $$object, $wiz, ( $objects = [] ) );
+	} elsif ( reftype $object eq 'HASH' ) {
+		$objects = getdata ( %$object, $wiz )
+			or cast( %$object, $wiz, ( $objects = [] ) );
+	} elsif ( reftype $object eq 'ARRAY' ) {
+		$objects = getdata ( @$object, $wiz )
+			or cast( @$object, $wiz, ( $objects = [] ) );
+	} elsif ( reftype $object eq 'GLOB' or reftpe $object eq 'IO' ) {
+		$objects = getdata ( *$object, $wiz )
+			or cast( *$object, $wiz, ( $objects = [] ) );
+	} else {
+		die "patches welcome";
+	}
+
+	unless ( grep { $_ eq $self } @$objects ) {
+		push @$objects, $self;
+		weaken($objects->[-1]);
+	}
 }
 
 sub untrack_object {
