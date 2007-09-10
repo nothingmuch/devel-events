@@ -80,9 +80,7 @@ sub handle_object_destroy {
 	my $class = delete $self->object_to_class->{$object};
 
 	$self->class_counters->{$class}--;
-
 }
-
 
 __PACKAGE__;
 
