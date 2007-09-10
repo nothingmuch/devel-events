@@ -5,24 +5,12 @@ use warnings;
 
 use Test::More 'no_plan';
 
+use Devel::Events::Handler::Callback;
+
 my $m; use ok $m = "Devel::Events::Filter::Stringify";
 
-
-{
-	package Handler;
-	sub new {
-		my ( $class, $h ) = @_;
-		bless $h, $class;
-	}
-
-	sub new_event {
-		my ( $self, @event ) = @_;
-		$self->( @event );
-	}
-}
-
 my @events;
-my $h = Handler->new(sub { push @events, [ @_ ] });
+my $h = Devel::Events::Handler::Callback->new(sub { push @events, [ @_ ] });
 
 my $f = $m->new( handler => $h );
 
