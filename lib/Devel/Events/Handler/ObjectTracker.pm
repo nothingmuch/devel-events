@@ -33,9 +33,7 @@ has class_counters => (
 );
 
 sub new_event {
-	my ( $self, @event ) = @_;
-
-	my ( $type, @data ) = @event;
+	my ( $self, $type, @data ) = @_;
 
 	if ( $self->can( my $method = "handle_$type" ) ) { # FIXME pattern match? i want erlang =)
 		$self->$method( @data );
