@@ -142,7 +142,7 @@ sub track_object {
 	} elsif ( reftype $object eq 'ARRAY' ) {
 		$objects = getdata ( @$object, $wiz )
 			or cast( @$object, $wiz, ( $objects = [] ) );
-	} elsif ( reftype $object eq 'GLOB' or reftpe $object eq 'IO' ) {
+	} elsif ( reftype $object eq 'GLOB' or reftype $object eq 'IO' ) {
 		$objects = getdata ( *$object, $wiz )
 			or cast( *$object, $wiz, ( $objects = [] ) );
 	} else {
