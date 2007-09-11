@@ -80,7 +80,16 @@ sub bless {
 
 	my $object = _core_bless( $data, $class );
 
-	$self->object_bless( $object, old_class => $old_class );
+	my $i = Carp::short_error_loc();
+	my ( $pkg, $file, $line ) = caller($i);
+
+	$self->object_bless(
+		$object,
+		old_class => $old_class,
+		'package' => $pkg,
+		file      => $file,
+		line      => $line,
+	);
 
 	return $object;
 }
