@@ -73,11 +73,13 @@ sub compile_cond {
 }
 
 sub grep {
-	my ( $self, @args ) = @_;
+	my ( $self, $cond, $events ) = @_;
 
-	my $compiled_cond = $self->compile_cond(@args);
+	my $compiled_cond = $self->compile_cond($cond);
 
-	grep { $compiled_cond->(@$_) } $self->events;
+	$events ||= $self->events;
+
+	grep { $compiled_cond->(@$_) } @$events;
 }
 
 sub limit {
