@@ -81,6 +81,7 @@ sub bless {
 
 	my $object = _core_bless( $data, $class );
 
+	require Carp::Heavy;
 	my $i = Carp::short_error_loc();
 	my ( $pkg, $file, $line ) = caller($i);
 
