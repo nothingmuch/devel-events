@@ -93,7 +93,7 @@ sub limit {
 	$_ = $self->compile_cond($_) for $from, $to;
 
 	my @matches;
-	my @events = $self->events;
+	my @events = @{ $args{events} || $self->events };
 
 	before: while ( my $event = shift @events ) {
 		if ( $from->(@$event) ) {
