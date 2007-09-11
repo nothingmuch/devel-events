@@ -67,7 +67,7 @@ sub compile_cond {
 	} else {
 		return sub {
 			my ( $type ) = @_;
-			$type eq $cond;
+			defined $type and $type eq $cond;
 		}
 	}
 }
