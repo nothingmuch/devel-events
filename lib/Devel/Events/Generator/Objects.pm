@@ -49,6 +49,7 @@ use Scalar::Util qw/reftype blessed weaken/;
 			$object = eval { CORE::bless($data, $class) };
 			$e = $@;
 		}
+
 		unless ( $e ) {
 			return $object;
 		} else {
