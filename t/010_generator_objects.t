@@ -40,7 +40,9 @@ throws_ok { bless "foo", "bar" } qr/^Can't bless non-reference value at $file li
 
 is( @events, 0, "no events" );
 
-my $obj = bless( {}, "Some::Class" );
+my $line;
+
+my $obj = bless( {}, "Some::Class" ); $line = __LINE__;
 my $obj_str = "$obj";
 
 is( @events, 1, "one event" );
@@ -48,14 +50,21 @@ is( @events, 1, "one event" );
 is_deeply(
 	\@events,
 	[
-		[ object_bless => ( object => $obj_str, old_class => undef, generator => "$gen" ) ],
+		[ object_bless => (
+			object    => $obj_str,
+			old_class => undef,
+			package   => "main",
+			file      => __FILE__,
+			line      => $line,
+			generator => "$gen"
+		) ],
 	],
 	"event log",
 );
 
 @events = ();
 
-bless( $obj, "Some::Other::Class" );
+bless( $obj, "Some::Other::Class" ); $line = __LINE__;
 $obj_str = "$obj";
 
 is( @events, 1, "one event" );
@@ -63,7 +72,14 @@ is( @events, 1, "one event" );
 is_deeply(
 	\@events,
 	[
-		[ object_bless => ( object => $obj_str, old_class => 'Some::Class', generator => "$gen" ) ],
+		[ object_bless => (
+			object    => $obj_str,
+			old_class => "Some::Class",
+			package   => "main",
+			file      => __FILE__,
+			line      => $line,
+			generator => "$gen"
+		) ],
 	],
 	"event log",
 );
