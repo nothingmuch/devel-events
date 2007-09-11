@@ -49,8 +49,7 @@ use Scalar::Util qw/reftype blessed weaken/;
 			$object = eval { CORE::bless($data, $class) };
 			$e = $@;
 		}
-
-		if ( $object ) { # can't do CORE::bless(@_) due to proto, can't do &CORE::bless(@_) due to no such sub
+		unless ( $e ) {
 			return $object;
 		} else {
 			my $line = __LINE__ - 7;
