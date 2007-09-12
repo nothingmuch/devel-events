@@ -7,8 +7,6 @@ use Moose;
 
 with qw/Devel::Events::Generator/;
 
-extends qw/Moose::Object DB/;
-
 use Scalar::Util ();
 use Sub::ScopeFinalizer ();
 
