@@ -61,7 +61,7 @@ will get precedence.
 
 =over 4
 
-=item filter_events @event
+=item filter_event @event
 
 Prepends the output of C<stamp_data> to C<@event>
 
