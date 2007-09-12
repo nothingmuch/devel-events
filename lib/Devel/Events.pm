@@ -104,7 +104,7 @@ events.
 
 =item L<Devel::Events::Filter::Stringify>
 
-Stringify (by default using L<StrVal/overload>, to avoid side effects) all
+Stringify (by default using L<overload/StrVal>, to avoid side effects) all
 event data to avoid leaking.
 
 =item L<Devel::Events::Filter::Size>
