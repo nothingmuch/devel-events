@@ -98,3 +98,61 @@ sub disable {
 __PACKAGE__;
 
 __END__
+
+
+=pod
+
+=head1 NAME
+
+Devel::Events::Generator::SubTrace - generate C<executing_line> events using
+the perl debugger api.
+
+=head1 SYNOPSIS
+
+	my $g = Devel::Events::Generator::SubTrace->new( handler => $h );
+
+	$g->enable();
+
+	# every subroutine will have two events fired, on entry and exit
+
+	$g->disable();
+
+=head1 DESCRIPTION
+
+This L<Devel::Events> generator will fire sub tracing events using C<DB::sub>,
+a perl debugger hook.
+
+Only one instance may be enabled at a given time. Use
+L<Devel::Events::Handler::Multiplex> to deliver events to multiple handlers.
+
+Subroutines inside the L<Devel::Events> namespace or it's children will be
+skipped.
+
+=head1 METHODS
+
+=over 4
+
+=item enable
+
+Enable this generator instance, disabling any other instance of
+L<Devel::Events::Generator::SubTrace>.
+
+=item disable
+
+Stop firing events.
+
+=item enter_sub
+
+Called by C<DB::sub>. Sends the C<enter_sub> event.
+
+=item leave_sub
+
+Called by C<DB::sub>. Sends the C<leave_sub> event.
+
+=back
+
+=head1 SEE ALSO
+
+L<perldebguts>, L<Devel::CallTrace>, L<DB>, L<Devel::ebug>, L<perl5db.pl>
+
+=cut
