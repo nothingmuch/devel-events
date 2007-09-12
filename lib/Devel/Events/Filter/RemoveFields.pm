@@ -63,6 +63,30 @@ Devel::Events::Filter::RemoveFields - Remove certain fields from events
 
 =head1 DESCRIPTION
 
+This simple filter will remove all instances of a certain field in an event.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item fields
+
+An array reference.
+
+Tbe list of fields to remove from the event data.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item filter_event @event
+
+Removes the fields specified in C<fields> from the event data.
+
+=back
+
 =cut
 
 
