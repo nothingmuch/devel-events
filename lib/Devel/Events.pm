@@ -74,6 +74,10 @@ Fires an C<executing_line> event for every line using the perl debugger hook.
 
 Repeat events to multiple handlers.
 
+=item L<Devel::Events::Handler::Callback>
+
+Make a handler object out of a callback.
+
 =item L<Devel::Events::Handler::Log::Memory>
 
 Log all events to an array.
