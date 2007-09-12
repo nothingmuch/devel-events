@@ -123,6 +123,16 @@ debugging handler chains.
 
 =back
 
+=head1 AUTHOR
+
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT & LICENSE
+
+	Copyright (c) 2007 Yuval Kogman. All rights reserved
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the MIT license or the same terms as Perl itself.
+
 =cut
 
 
