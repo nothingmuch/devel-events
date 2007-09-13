@@ -8,7 +8,6 @@ use Moose;
 with qw/Devel::Events::Generator/;
 
 use Scalar::Util ();
-use Sub::ScopeFinalizer ();
 
 my ( $SINGLETON );
 our ( $IGNORE, $DEPTH ); # can't local a lexical ;_;
