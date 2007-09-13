@@ -118,3 +118,87 @@ sub new_event {
 __PACKAGE__;
 
 __END__
+
+=pod
+
+=head1 NAME
+
+Devel::Events::Handler::Log::Memory - An optional base role for event generators.
+
+=head1 SYNOPSIS
+
+	use Devel::Events::Handler::Log::Memory;
+
+	my $log = Devel::Events::Handler::Log::Memory->new();
+
+	Some::Geneator->new( handler => $log );
+
+=head1 DESCRIPTION
+
+This convenience role provides a basic C<send_event> method, useful for
+implementing generators.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item events
+
+The list of events.
+
+Auto derefs.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item clear
+
+Remove all events from the log
+
+=item compile_cond
+
+Used by C<grep> and C<limit>.
+
+Scalars become equality tests, hashes become recursive conditions, and code
+reference are retained.
+
+The output is a code reference that can be used to match events.
+
+=item grep $cond
+
+Return the list of events that match a certain condition.
+
+=item limit from => $cond, to => $cond
+
+Return events between two events. If if C<from> or C<to> is omitted then it
+returns all the events up to or from the other filter.
+
+=item new_event @event
+
+Log the event to the C<events> list by calling C<add_event>.
+
+=item add_event \@event
+
+Provided by L<MooseX::AttributeHelpers>.
+
+=back
+
+=head1 CAVEATS
+
+If any references are present in the event data then they will be preserved
+till the log is clear. This may cause leaks.
+
+To overcome this problem use L<Devel::Events::Filter::Stringify>.
+
+=head1 TODO
+
+Add an option to always hash all the event data for convenience.
+
+Make C<grep> and C<limit> into exportable functions, too.
+
+=cut
+
+
