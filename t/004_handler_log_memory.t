@@ -41,8 +41,6 @@ is_deeply(
 	"grep",
 );
 
-use Data::Dumper;
-
 is_deeply(
 	[ $log->limit(
 		from => { id => 3 },
