@@ -15,6 +15,7 @@ WriteMakefile(
 		'MooseX::AttributeHelpers' => 0,
 		'Set::Object'              => 0,
 		'Time::HiRes'              => 0,
+		'Test::use::ok'            => 0,
 	},
 );
 
