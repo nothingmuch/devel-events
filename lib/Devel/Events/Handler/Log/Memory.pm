@@ -82,6 +82,20 @@ sub grep {
 	grep { $compiled_cond->(@$_) } @$events;
 }
 
+sub first {
+	my ( $self, $cond, $events ) = @_;
+
+	my $compiled_cond = $self->compile_cond($cond);
+
+	$events ||= $self->events;
+
+	foreach my $event ( @$events ) {
+		return $event if $compiled_cond->(@$event);
+	}
+
+	return;
+}
+
 sub limit {
 	my ( $self, %args ) = @_;
 
