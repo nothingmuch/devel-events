@@ -13,7 +13,7 @@ my @events;
 
 my $h = Devel::Events::Handler::Callback->new(sub {
 	my ( $type, %args ) = @_;
-	push @events, [ $type => $args{name}, ( $type eq 'enter_sub' ? $args{args}[0] : () ) ];
+	push @events, [ $type => $args{name}, ( $type eq 'enter_sub' ? $args{args}[0] : $args{ret} ) ];
 });
 
 my $o = Devel::Events::Generator::SubTrace->new( handler => $h );
@@ -34,10 +34,10 @@ is_deeply(
 	[
 		[ enter_sub => 'main::foo' => 3 ],
 			[ enter_sub => 'main::bar' => 2 ],
-			[ leave_sub => 'main::bar' ],
+			[ leave_sub => 'main::bar' => 44 ],
 			[ enter_sub => 'main::bar' => 5 ],
-			[ leave_sub => 'main::bar' ],
-		[ leave_sub => 'main::foo' ],
+			[ leave_sub => 'main::bar' => 47 ],
+		[ leave_sub => 'main::foo' => ( 47 + 44 + 3 ) ],
 	],
 	"call chain events",
 );

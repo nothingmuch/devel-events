@@ -63,7 +63,10 @@ BEGIN { $DEPTH = -1 };
 			}
 		}
 
-		$SINGLETON->leave_sub(@args);
+		$SINGLETON->leave_sub(
+			@args,
+			ret => (wantarray) ? \@ret : defined(wantarray) ? $ret : undef,
+		);
 
 		return (wantarray) ? @ret : defined(wantarray) ? $ret : undef;
 	}
