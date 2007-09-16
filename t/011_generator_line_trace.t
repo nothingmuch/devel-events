@@ -25,8 +25,8 @@ $o->disable;
 is_deeply(
 	\@events,
 	[
-		[ executing_line => ( package => "main", file => __FILE__, line => $line ) ],
-		[ executing_line => ( package => "main", file => __FILE__, line => $line + 2 ) ],
+		[ executing_line => ( generator => $o, package => "main", file => __FILE__, line => $line ) ],
+		[ executing_line => ( generator => $o, package => "main", file => __FILE__, line => $line + 2 ) ],
 	],
 	"line events",
 );

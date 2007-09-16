@@ -11,8 +11,8 @@ has handler => (
 );
 
 sub send_event {
-	my ( $self, @event ) = @_;
-	$self->handler->new_event( @event );
+	my ( $self, $type, @data ) = @_;
+	$self->handler->new_event( $type, generator => $self, @data );
 }
 
 __PACKAGE__;
@@ -64,6 +64,9 @@ Required.
 =item send_event @event
 
 Delegates to C<handler>, calling the method C<new_event> on it.
+
+The field C<generator> with the value of the generator object will be
+prepended.
 
 =back
 
