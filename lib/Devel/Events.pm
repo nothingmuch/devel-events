@@ -123,6 +123,21 @@ debugging handler chains.
 
 =back
 
+=head1 EVENT STRUCTURE
+
+All events are passed as lists.
+
+The default components will generate lists containing a single string which is
+the event name, and then a list of key/value pairs. Duplicate keys are allowed
+and their values will be preserved by the default filters, for example.
+
+The idea is that hashifying is easy when desired, but that other structures can
+easily be supported as well.
+
+Default values should be prepended to the list of key/value pairs so that when
+assigned to a hash the values that succeed them will get be the ones ending up
+in the hash.
+
 =head1 AUTHOR
 
 Yuval Kogman <nothingmuch@woobling.org>
