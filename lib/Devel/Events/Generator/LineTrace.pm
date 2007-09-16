@@ -63,6 +63,35 @@ a perl debugger hook.
 Only one instance may be enabled at a given time. Use
 L<Devel::Events::Handler::Multiplex> to deliver events to multiple handlers.
 
+=head1 EVENTS
+
+=over 4
+
+=item executing_line
+
+When the generator is enabled, this event will fire for every line of code just
+before it is executed.
+
+Lines in a package starting with C<Devel::Events::> will not be reported.
+
+=over 4
+
+=item package
+
+The package the line is in.
+
+=item file
+
+The file of the line being executed.
+
+=item line
+
+The line number of the line being executed.
+
+=back
+
+=back
+
 =head1 METHODS
 
 =over 4
