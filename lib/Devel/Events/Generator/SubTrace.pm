@@ -130,6 +130,60 @@ L<Devel::Events::Handler::Multiplex> to deliver events to multiple handlers.
 Subroutines inside the L<Devel::Events> namespace or it's children will be
 skipped.
 
+=head1 EVENTS
+
+=over 4
+
+=item enter_sub
+
+When the generator is enabled, this event will fire for every subroutine, just
+before it is executed.
+
+Subroutines in a package starting with C<Devel::Events::> will not be reported.
+
+=over 4
+
+=item name
+
+The name of the subroutine (or it's C<overload::StrVal> if it has none).
+
+=item code
+
+A code reference to the subroutine.
+
+=item args
+
+A copy of the arguments list. C<\@_> causes segfaults but C<[ @_ ]> does not.
+Bummer ;-)
+
+=item depth
+
+The current depth of the call stack.
+
+=item wantarray
+
+The context of the call as given by C<wantarray>
+
+=back
+
+=item leave_sub
+
+Exactly like C<enter_sub>, but fired just after leaving the subroutine.
+
+=over 4
+
+All the fields of C<enter_sub> are passed.
+
+Additional fields:
+
+=item ret
+
+The return value of the subroutine.
+
+=back
+
+=back
+
 =head1 METHODS
 
 =over 4
