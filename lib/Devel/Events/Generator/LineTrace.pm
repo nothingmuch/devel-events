@@ -14,7 +14,7 @@ my $SINGLETON;
 sub DB::DB {
 	if ( $SINGLETON ) {
 		my ( $package, $file, $line ) = caller;
-		return if $package eq __PACKAGE__;
+		return if $package =~ /^Devel::Events::/;
 		$SINGLETON->line( package => $package, file => $file, line => $line );
 	}
 }
