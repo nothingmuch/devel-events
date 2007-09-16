@@ -5,9 +5,33 @@ use Moose;
 
 with qw/Devel::Events::Handler/;
 
-use Scalar::Util qw/reftype/;
+use Devel::Events::Match;
 
 use MooseX::AttributeHelpers;
+
+has matcher => (
+	isa => "Devel::Events::Match",
+	is  => "rw",
+	default => sub { Devel::Events::Match->new },
+	handles => sub {
+		my ( $attr, $meta ) = @_;
+		
+		my %mapping;
+
+		foreach my $method ( $meta->get_method_list ) {
+			next if $method =~ /^ (?: compile_cond | match ) $/x;
+			next if __PACKAGE__->can($method);
+
+			$mapping{$method} ||= sub {
+				my ( $self, @args ) = @_;
+				unshift @args, "match" if @args == 1;
+				$self->matcher->$method( events => scalar($self->events), @args );
+			}
+		}
+
+		return %mapping;
+	}
+);
 
 has events => (
 	metaclass => 'Collection::Array',
@@ -16,117 +40,19 @@ has events => (
 	default    => sub { [] },
 	auto_deref => 1,
 	provides   => {
-		push => 'add_event',
+		push  => 'add_event',
+		clear => 'clear',
 	},
 );
-
-sub clear {
-	my $self = shift;
-	@{ $self->events } = ();
-}
-
-sub compile_cond {
-	my ( $self, $cond ) = @_;
-
-	if ( ref $cond ) {
-		if ( reftype $cond eq 'CODE' ) {
-			return $cond;
-		} elsif ( reftype $cond eq 'HASH' ) {
-
-			my %cond = %$cond;
-
-			foreach my $subcond ( values %cond ) {
-				$subcond = $self->compile_cond($subcond);
-			}
-
-			return sub {
-				my ( @data ) = @_;
-
-				if ( @data == 1 ) {
-					if ( reftype($data[0]) eq 'ARRAY' ) {
-						@data = @{ $data[0] };
-					} elsif ( reftype($data[0]) eq 'HASH' ) {
-						@data = %{ $data[0] };
-					}
-				}
-
-				my $type = shift @data if @data % 2 == 1;
-
-				my %data = @data;
-
-				$data{type} = $type if defined $type;
-
-				foreach my $key ( keys %cond ) {
-					my $subcond = $cond{$key};
-					return unless $subcond->($data{$key});
-				}
-
-				return 1;
-			}
-		} else { die "unknown condition format: $cond" }
-	} else {
-		return sub {
-			my ( $type ) = @_;
-			defined $type and $type eq $cond;
-		}
-	}
-}
-
-sub grep {
-	my ( $self, $cond, $events ) = @_;
-
-	my $compiled_cond = $self->compile_cond($cond);
-
-	$events ||= $self->events;
-
-	grep { $compiled_cond->(@$_) } @$events;
-}
-
-sub first {
-	my ( $self, $cond, $events ) = @_;
-
-	my $compiled_cond = $self->compile_cond($cond);
-
-	$events ||= $self->events;
-
-	foreach my $event ( @$events ) {
-		return $event if $compiled_cond->(@$event);
-	}
-
-	return;
-}
-
-sub limit {
-	my ( $self, %args ) = @_;
-
-	my ( $from, $to ) = @args{qw/from to/};
-
-	$from ||= sub { 1 }; # match immediately
-	$to   ||= sub { 0 }; # never match
-
-	$_ = $self->compile_cond($_) for $from, $to;
-
-	my @matches;
-	my @events = @{ $args{events} || $self->events };
-
-	before: while ( my $event = shift @events ) {
-		if ( $from->(@$event) ) {
-			push @matches, $event;
-			last before;
-		}
-	}
-
-	match: while ( my $event = shift @events ) {
-		push @matches, $event;
-		last match if $to->(@$event);
-	}
-
-	return @matches;
-}
 
 sub new_event {
 	my ( $self, @event ) = @_;
 	$self->add_event(\@event);
+}
+
+sub replay {
+	my ( $self, $handler ) = @_;
+	$handler->new_event( @$_ ) for $self->events;
 }
 
 __PACKAGE__;
@@ -170,25 +96,40 @@ Auto derefs.
 
 =item clear
 
-Remove all events from the log
+Remove all events from the log.
 
-=item compile_cond
+Provided by L<MooseX::AttributeHelpers>.
 
-Used by C<grep> and C<limit>.
+=item first $cond
 
-Scalars become equality tests, hashes become recursive conditions, and code
-reference are retained.
+=item first %args
 
-The output is a code reference that can be used to match events.
+Return the first event that matches a certain condition.
+
+Delegates to L<Devel::Events::Match>.
 
 =item grep $cond
 
+=item grep %args
+
 Return the list of events that match a certain condition.
 
-=item limit from => $cond, to => $cond
+Delegates to L<Devel::Events::Match>.
+
+=item limit from => $cond, to => $cond, %args
 
 Return events between two events. If if C<from> or C<to> is omitted then it
 returns all the events up to or from the other filter.
+
+Delegates to L<Devel::Events::Match>.
+
+=item chunk $marker
+
+=item chunk %args
+
+Cuts the event log into chunks. When C<$marker> matches a new chunk is opened.
+
+Delegates to L<Devel::Events::Match>.
 
 =item new_event @event
 
@@ -198,6 +139,18 @@ Log the event to the C<events> list by calling C<add_event>.
 
 Provided by L<MooseX::AttributeHelpers>.
 
+=item replay $handler
+
+Replay all the events in the log to $handler.
+
+Useful if C<$handler> does heavy analysis that you want to delay.
+
+There isn't much to it:
+
+	$handler->new_event(@$_) for $self->events;
+
+So obviously you can replay subsets of events manually.
+
 =back
 
 =head1 CAVEATS
@@ -205,7 +158,8 @@ Provided by L<MooseX::AttributeHelpers>.
 If any references are present in the event data then they will be preserved
 till the log is clear. This may cause leaks.
 
-To overcome this problem use L<Devel::Events::Filter::Stringify>.
+To overcome this problem use L<Devel::Events::Filter::Stringify>. It will not
+allow overloading unless asked to, so it's safe to use without side effects.
 
 =head1 TODO
 
