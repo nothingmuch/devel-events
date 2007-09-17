@@ -1,0 +1,6 @@
+0.03
+	- More docs
+	- Devel::Events::Match
+	- Add Filter::HandlerOptional
+	- Devel::Events::Filter::Callback
+	- A pony (stolen from Jifty)
