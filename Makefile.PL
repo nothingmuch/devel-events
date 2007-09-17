@@ -11,8 +11,8 @@ WriteMakefile(
 	SIGN         => 1,
 	PL_FILES     => { },
 	PREREQ_PM    => {
-		'Moose'                    => '0.18',
-		'MooseX::AttributeHelpers' => 0,
+		'Moose'                    => '0.26',
+		'MooseX::AttributeHelpers' => '0.03',
 		'Set::Object'              => 0,
 		'Time::HiRes'              => 0,
 		'Test::use::ok'            => 0,
