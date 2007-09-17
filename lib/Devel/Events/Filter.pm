@@ -11,27 +11,21 @@ has handler => (
 	# does => "Devel::Events::Handler", # we like duck typing
 	isa => "Object",
 	is  => "rw",
-	required => 0,
+	required => 1,
 );
 
 sub new_event {
 	my ( $self, @event ) = @_;
 
-	my @filtered = $self->filter_event( @event );
-
-	if ( my $handler = $self->handler ) {
-		$handler->new_event(@filtered);
-	} else {
-		$self->no_handler_error(@filtered);
+	if ( my @filtered = $self->filter_event( @event ) ) {
+		$self->send_filtered_event(@filtered);
 	}
 }
 
-sub no_handler_error {
-	my ( $self, @event ) = @_;
-
-	# silently drop events if we don't have a receiver
+sub send_filtered_event {
+	my ( $self, @filtered ) = @_;
+	$self->handler->new_event( @filtered );
 }
-
 
 __PACKAGE__;
 
