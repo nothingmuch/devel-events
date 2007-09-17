@@ -19,6 +19,7 @@ ok( $m->match({ foo => { bar => "gorch" }, baz => sub { 1 }, type => "elk" }, el
 ok( !$m->match({ foo => { bar => "gorch" }, baz => sub { 1 }, type => "elk" }, moose => foo => [ bar => "gorch" ] ), "hash (no match)" );
 ok( !$m->match({ foo => { bar => "gorch" }, baz => sub { 1 }, type => "elk" }, elk => foo => [ bar => "blah" ] ), "hash (no match)" );
 ok( !$m->match({ foo => { bar => "gorch" }, baz => sub { 1 }, type => "elk" }, elk => baz => "blah" ), "hash (no match)" );
+ok( !$m->match({ foo => { bar => "gorch" }, baz => sub { 1 }, type => "elk" }, elk => "baz" ), "hash (odd sized event)" );
 
 my @args;
 ok( $m->match(sub { @args = @_; 1 }, foo => bar => [ 1 ] ), "code" );
