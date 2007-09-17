@@ -88,6 +88,10 @@ The list of events.
 
 Auto derefs.
 
+=item matcher
+
+The L<Devel::Events::Match> instance used for event matching.
+
 =back
 
 =head1 METHODS
