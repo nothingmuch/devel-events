@@ -3,7 +3,7 @@
 package Devel::Events::Filter::Warn;
 use Moose;
 
-with qw/Devel::Events::Filter/;
+with qw/Devel::Events::Filter::HandlerOptional/;
 
 sub filter_event {
 	my ( $self, @event ) = @_;
