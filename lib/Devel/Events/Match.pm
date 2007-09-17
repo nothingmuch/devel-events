@@ -31,7 +31,7 @@ sub first {
 	my $compiled_cond = $self->compile_cond($match);
 
 	foreach my $event ( @$events ) {
-		return @$event if $compiled_cond->(@$event);
+		return wantarray ? @$event : $event if $compiled_cond->(@$event);
 	}
 
 	return;
