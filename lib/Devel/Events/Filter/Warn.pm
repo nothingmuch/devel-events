@@ -7,7 +7,7 @@ with qw/Devel::Events::Filter::HandlerOptional/;
 
 sub filter_event {
 	my ( $self, @event ) = @_;
-	warn "@event";
+	warn "@event\n";
 	return @event;
 }
 
