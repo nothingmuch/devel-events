@@ -1,5 +1,6 @@
 0.04
 	- Improve Devel::Events::Filter::Warn
+	- Add Devel::Events::Generator::Require
 
 0.03
 	- More docs
