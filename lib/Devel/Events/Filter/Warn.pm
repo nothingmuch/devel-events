@@ -3,12 +3,83 @@
 package Devel::Events::Filter::Warn;
 use Moose;
 
+use overload ();
+use Scalar::Util qw(blessed reftype looks_like_number);
+
 with qw/Devel::Events::Filter::HandlerOptional/;
+
+has pretty => (
+	isa => "Bool",
+	is  => "rw",
+	default => 1,
+);
+
+has kvp => (
+	isa => "Bool",
+	is  => "rw",
+	default => 1,
+);
+
+has stringify => (
+	isa => "Bool",
+	is  => "rw",
+	default => 0,
+);
 
 sub filter_event {
 	my ( $self, @event ) = @_;
-	warn "@event\n";
+
+	if ( $self->pretty ) {
+		my ( $name, @data ) = @event;
+
+		if ( $self->kvp ) {
+			my $output = "$name:";
+
+			my $even = 1;
+			foreach my $field ( @data ) {
+				if ( $even ) {
+					$output .= " $field =>";
+				} else {
+					$output .= " " . $self->_make_printable($field) . ",";
+				}
+
+				$even = !$even;
+			}
+
+			$output =~ s/,$| =>$//;
+
+			warn "$output\n";
+		} else {
+			warn "$name: " . join(" ", map { $self->_make_printable($_) } @data );
+		}
+	} else {
+		no warnings 'uninitialized';
+		warn "@event\n";
+	}
+
 	return @event;
+}
+
+sub _make_printable {
+	my ( $self, $field, $no_rec ) = @_;
+
+	defined($field)
+		? ( ref($field)
+			? blessed($field)
+				? $self->stringify ? "$field" : overload::StrVal($field)
+				: ( reftype($field) eq 'ARRAY' && !$no_rec
+					?  "[ " . join(", ", map { $self->_make_printable( $_, 1 ) } @$field ) . " ]"
+					: "$field" )
+			: ( looks_like_number($field)
+				? $field
+				: do {
+					my $str = $field;
+					# FIXME require String::Escape
+					$str =~ s/\n/\\n/g;
+					$str =~ s/\r/\\r/g;
+					qq{"$str"}
+				} ) )
+		: "undef"
 }
 
 __PACKAGE__;
