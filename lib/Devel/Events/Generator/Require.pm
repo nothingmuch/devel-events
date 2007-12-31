@@ -36,7 +36,7 @@ BEGIN {
 			if ( $e and not ref $e ) {
 				my $file = quotemeta(__FILE__);
 				my ( $caller_file, $caller_line ) = (caller)[1,2];
-				$e =~ s/at $file line \d+\.$/at $caller_file line $caller_line./;
+				$e =~ s/at $file line \d+\.$/at $caller_file line $caller_line./os;
 			}
 
 			$SINGLETON->require_finished(
