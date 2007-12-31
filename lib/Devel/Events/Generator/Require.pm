@@ -11,8 +11,7 @@ use Scalar::Util qw(weaken);
 my $SINGLETON;
 
 BEGIN {
-	# before Moose or anything else is parsed, we overload CORE::GLOBAL::bless
-	# this will divert bless to an object of our choosing if that variable is filled with something
+	# before Moose or anything else is parsed, we overload CORE::GLOBAL::require
 
 	require Carp::Heavy;
 
