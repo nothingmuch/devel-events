@@ -34,6 +34,9 @@ Devel::Events - Extensible instrumentation framework.
 L<Devel::Events> is an event generation, filtering and analaysis framework for
 instrumenting and auditing perl code.
 
+The design's purpose is to decouple the mechanics of code instrumentation from
+the analysis, making it easier to write debugging/profiling tools.
+
 L<Devel::Events::Generator> object fire events, which can be mangled by
 L<Devel::Event::Filter> objects. Eventually any number of
 L<Devel::Event::Handler> objects can receive a given event, and perform
@@ -48,7 +51,8 @@ There are two main types of components - generators and handlers.
 
 Filters are special types of handlers that always delegate to another handler.
 
-The multiplex handler may be used to delegate to any number of handlers.
+The multiplex handler may be used to delegate to any number of handlers, and
+can be the handler for several generators.
 
 Using these basic components complex chains of handlers can be built to
 properly analyze the events you are interested in.
@@ -67,6 +71,10 @@ Uses the perl debugger hook to generate C<enter_sub> and C<leave_sub> events.
 =item L<Devel::Events::Generator::LineTrace>
 
 Fires an C<executing_line> event for every line using the perl debugger hook.
+
+=item L<Devel::Events::Generator::Require>
+
+Fires events for C<require> and c<use> calls.
 
 =head2 Handlers
 
@@ -128,15 +136,7 @@ debugging handler chains.
 All events are passed as lists.
 
 The default components will generate lists containing a single string which is
-the event name, and then a list of key/value pairs. Duplicate keys are allowed
-and their values will be preserved by the default filters, for example.
-
-The idea is that hashifying is easy when desired, but that other structures can
-easily be supported as well.
-
-Default values should be prepended to the list of key/value pairs so that when
-assigned to a hash the values that succeed them will get be the ones ending up
-in the hash.
+the event name, and then a list of key/value pairs.
 
 =head1 AUTHOR
 
