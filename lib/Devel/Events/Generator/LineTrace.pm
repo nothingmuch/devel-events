@@ -116,6 +116,8 @@ Called by C<DB::DB>. Used to generate the event.
 Apparently this must be run under C<perl -d>. This is very strange, since
 L<Devel::Events::Generator::SubTrace> doesn't need the C<-d> flag set.
 
+The L<Enbugger> module can help overcome this limitation.
+
 =head1 SEE ALSO
 
 L<perldebguts>, L<Devel::LineTrace>, L<DB>, L<Devel::ebug>, L<perl5db.pl>
