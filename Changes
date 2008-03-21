@@ -1,3 +1,6 @@
+0.05
+	- Remove now broken workaround for pre 0.33 roles
+
 0.04
 	- Improve Devel::Events::Filter::Warn
 	- Add Devel::Events::Generator::Require
