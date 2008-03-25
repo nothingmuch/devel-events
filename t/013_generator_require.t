@@ -57,18 +57,18 @@ is_deeply(
 
 @log = ();
 
-eval { require URI };
+eval { require File::Find };
 
-@log = @log[0,-1]; # don't care about what URI.pm required
+@log = @log[0,-1]; # don't care about what File::Find.pm required
 
 is_deeply(
 	\@log,
 	[
-		[ try_require      => generator => $g, file => "URI.pm", ],
+		[ try_require      => generator => $g, file => "File/Find.pm", ],
 		[ require_finished =>
 			generator => $g,
-			file => "URI.pm",
-			matched_file => $INC{"URI.pm"},
+			file => "File/Find.pm",
+			matched_file => $INC{"File/Find.pm"},
 			error => "",
 			return_value => 1,
 		],
