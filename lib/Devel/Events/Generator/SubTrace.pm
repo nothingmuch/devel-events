@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+use Moose ();
+use Moose::Role ();
+
 BEGIN { $^P |= 0x01 }
 
 package Devel::Events::Generator::SubTrace;
