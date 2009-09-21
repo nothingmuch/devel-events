@@ -19,18 +19,17 @@ $g->enable();
 
 is_deeply( \@log, [], "log empty" );
 
-eval { require "foo.pm" };
+eval { require "this_file_does_not_exist.pm" };
 
 is_deeply(
 	\@log,
 	[
-		[ try_require      => generator => $g, file => "foo.pm", ],
+		[ try_require      => generator => $g, file => "this_file_does_not_exist.pm", ],
 		[ require_finished =>
 			generator => $g,
-			file => "foo.pm",
+			file => "this_file_does_not_exist.pm",
 			matched_file => undef,
-			error => "Can't locate foo.pm in \@INC (\@INC contains: @INC) at " . __FILE__ . " line 22.\n",
-			return_value => undef
+			error => "Can't locate this_file_does_not_exist.pm in \@INC (\@INC contains: @INC) at " . __FILE__ . " line 22.\n",
 		],
 	],
 	"log events"
@@ -38,18 +37,17 @@ is_deeply(
 
 @log = ();
 
-eval { require Bar };
+eval { require This::Module::Does::Not::Exist };
 
 is_deeply(
 	\@log,
 	[
-		[ try_require      => generator => $g, file => "Bar.pm", ],
+		[ try_require      => generator => $g, file => "This/Module/Does/Not/Exist.pm", ],
 		[ require_finished =>
 			generator => $g,
-			file => "Bar.pm",
+			file => "This/Module/Does/Not/Exist.pm",
 			matched_file => undef,
-			error => "Can't locate Bar.pm in \@INC (\@INC contains: @INC) at " . __FILE__ . " line 41.\n",
-			return_value => undef
+			error => "Can't locate This/Module/Does/Not/Exist.pm in \@INC (\@INC contains: @INC) at " . __FILE__ . " line 40.\n",
 		],
 	],
 	"log events"
@@ -69,7 +67,6 @@ is_deeply(
 			generator => $g,
 			file => "File/Find.pm",
 			matched_file => $INC{"File/Find.pm"},
-			error => "",
 			return_value => 1,
 		],
 	],

@@ -5,6 +5,7 @@ package Devel::Events::Generator::Require;
 use strict;
 use warnings;
 
+use Try::Tiny;
 use Sub::Uplevel;
 use Scalar::Util qw(weaken);
 
@@ -23,35 +24,35 @@ BEGIN {
 		}
 
 		# require is always in scalar context
-		local $@;
-		my $ret;
-
-	 	eval { uplevel 4, sub { $ret = CORE::require($file) } };
-
-		no warnings 'uninitialized';
-
-		if ( defined $SINGLETON ) {
-			my $e = $@;
-
-			if ( $e and not ref $e ) {
-				my $file = quotemeta(__FILE__);
-				my ( $caller_file, $caller_line ) = (caller)[1,2];
-				$e =~ s/at $file line \d+\.$/at $caller_file line $caller_line./os;
+		my $ret = try {
+			uplevel 5, sub { CORE::require($file) };
+		} catch {
+			unless ( ref ) {
+				my $this_file = quotemeta(__FILE__);
+				my ( $caller_file, $caller_line ) = (caller(2))[1,2];
+				s/at $this_file line \d+\.$/at $caller_file line $caller_line./os;
 			}
 
+			if ( defined $SINGLETON ) {
+				$SINGLETON->require_finished(
+					file         => $file,
+					matched_file => $INC{$file},
+					error        => $_,
+				);
+			}
+
+			die $_;
+		};
+
+		if ( defined $SINGLETON ) {
 			$SINGLETON->require_finished(
 				file         => $file,
 				matched_file => $INC{$file},
-				error        => $e,
 				return_value => $ret,
 			);
 		}
 
-		if ( $@ ) {
-			die $@;
-		} else {
-			return $ret;
-		}
+		return $ret;
 	}
 }
 
