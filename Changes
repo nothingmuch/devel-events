@@ -1,3 +1,8 @@
+0.06
+	- use Try::Tiny when evaling
+	- don't import from Moose (breaks the Perl debugger hooks)
+	- missing dep on Sub::Uplevel
+
 0.05
 	- Remove now broken workaround for pre 0.33 roles
 
