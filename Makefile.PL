@@ -17,6 +17,7 @@ WriteMakefile(
 		'Sub::Uplevel'             => 0,
 		'Time::HiRes'              => 0,
 		'Test::use::ok'            => 0,
+		'Try::Tiny'                => 0,
 	},
 );
 
