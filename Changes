@@ -1,10 +1,13 @@
-0.07
+0.08
 	- missing dep in Try::Tiny
 
-0.06
+0.07
 	- use Try::Tiny when evaling
 	- don't import from Moose (breaks the Perl debugger hooks)
 	- missing dep on Sub::Uplevel
+
+0.06
+	- use File::Find for testing instead of URI (just needed a core module)
 
 0.05
 	- Remove now broken workaround for pre 0.33 roles
