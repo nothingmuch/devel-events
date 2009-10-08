@@ -1,3 +1,6 @@
+0.07
+	- missing dep in Try::Tiny
+
 0.06
 	- use Try::Tiny when evaling
 	- don't import from Moose (breaks the Perl debugger hooks)
