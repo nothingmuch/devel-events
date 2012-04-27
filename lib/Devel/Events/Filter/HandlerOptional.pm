@@ -3,7 +3,7 @@
 package Devel::Events::Filter::HandlerOptional;
 use Moose::Role;
 
-with 'Devel::Events::Filter' => { excludes => [qw(send_filtered_event)] };
+with 'Devel::Events::Filter' => { -excludes => [qw(send_filtered_event)] };
 
 has handler => (
 	# does => "Devel::Events::Handler", # we like duck typing
